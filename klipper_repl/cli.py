@@ -72,10 +72,10 @@ async def run(args):
             while True:
                 try:
                     with patch_stdout():
-                        finished, unfinished = await asyncio.wait([
+                        finished, unfinished = await asyncio.wait([asyncio.create_task(t) for t in [
                             session.prompt_async(f'{hostname}:{args.socket}* ', completer=completion, lexer=lexer),
                             disconnect_event.wait()
-                        ], return_when=asyncio.FIRST_COMPLETED)
+                        ]], return_when=asyncio.FIRST_COMPLETED)
 
                         if disconnect_event.is_set():
                             for task in unfinished:
